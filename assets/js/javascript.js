@@ -62,10 +62,6 @@ function makeListItem(index, myItemName) {
   console.table(myData);
 }
 
-makeList("svend");
-
-makeListItem(0, "op");
-
 // modtager et index for listen, og et index for item, og fjerner dette item fra listen
 
 function removeItem(listIndex, itemIndex) {
