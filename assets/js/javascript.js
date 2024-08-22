@@ -9,7 +9,7 @@ let inputButtonList = document.createElement("button");
 inputDivList.appendChild(inputBoxList);
 inputDivList.appendChild(inputButtonList);
 
-inputButtonList.innerHTML = "Add";
+inputButtonList.innerHTML = "Add List";
 
 inputButtonList.addEventListener("click", (e) => {
   makeList(inputBoxList.value);
@@ -27,7 +27,7 @@ inputDivItem.appendChild(inputBoxItem);
 inputDivItem.appendChild(inputBoxItemIndex);
 inputDivItem.appendChild(inputButtonItem);
 
-inputButtonItem.innerHTML = "Add";
+inputButtonItem.innerHTML = "Add Item";
 
 inputButtonItem.addEventListener("click", (e) => {
   let index = inputBoxItemIndex.value;
@@ -36,16 +36,30 @@ inputButtonItem.addEventListener("click", (e) => {
   makeListItem(item, index);
 });
 
+listContainer = document.createElement("ul");
+myApp.appendChild(listContainer);
+
 let myData = []; // array der indeholder all list descriptions
 
 // modtager et navn string ------------------
 function makeList(myName) {
+  const listItem = document.createElement("li");
+  listItem.innerHTML = myName;
+
+  listContainer.appendChild(listItem);
+
   let myList = {
-    name: myName, // key value pair
+    name: myName, // Key-value pair
     listItem: [],
   };
 
   myData.push(myList);
+
+  let index = myData.length - 1;
+
+  listItem.addEventListener("click", (e) => {
+    console.log(index, myName); // Log the index when clicked
+  });
 
   console.table(myData);
 }

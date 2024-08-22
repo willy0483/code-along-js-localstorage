@@ -1,0 +1,19 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+input {
+  padding: 0.5rem;
+  margin: 1rem;
+}
+button {
+  padding: 0.5rem 1rem;
+}
+
+li {
+  background-color: #f4f4f4;
+  margin: 5px 0;
+  padding: 10px;
+  border-radius: 4px;
+}
