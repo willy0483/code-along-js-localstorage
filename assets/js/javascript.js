@@ -58,14 +58,22 @@ function makeList(myName) {
   let index = myData.length - 1;
 
   listItem.addEventListener("click", (e) => {
-    console.log(index, myName); // Log the index when clicked
+    console.log(index, myName); // Log the index on click
   });
 
   console.table(myData);
 }
 
+listItemContainer = document.createElement("ul");
+listContainer.appendChild(listItemContainer);
+
 // ------------------------
 function makeListItem(index, myItemName) {
+  const listItem = document.createElement("li");
+  listItem.innerHTML = myItemName;
+
+  listItemContainer.appendChild(listItem);
+
   let myListItem = {
     name: myItemName,
     status: true,
@@ -75,7 +83,6 @@ function makeListItem(index, myItemName) {
 
   console.table(myData);
 }
-
 // modtager et index for listen, og et index for item, og fjerner dette item fra listen
 
 function removeItem(listIndex, itemIndex) {
