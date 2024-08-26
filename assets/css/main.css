@@ -1,1 +1,7 @@
-  
+.myMenu {
+  width: 30px;
+}
+
+.hidden {
+  display: none;
+}

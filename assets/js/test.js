@@ -41,58 +41,155 @@ function makeItem(index, myName) {
 
 // modtager et index for listen, og et index for item, og fjerner dette item fra listen.
 
+function removeList(listIndex) {
+  myData.splice(listIndex, 1);
+}
+
 function removeItem(listIndex, itemIndex) {
   let myList = myData[listIndex];
 
   myList.listItems.splice(itemIndex, 1);
 }
 
+function editList(listIndex, oldName) {
+  const editContainer = document.createElement("div");
+  document.body.appendChild(editContainer);
+
+  let input = document.createElement("input");
+  input.value = oldName;
+  editContainer.appendChild(input);
+  editContainer.appendChild(input);
+
+  let yesEditButton = document.createElement("button");
+  yesEditButton.innerHTML = "Yes";
+  editContainer.appendChild(yesEditButton);
+
+  let cancelEditButton = document.createElement("button");
+  cancelEditButton.innerHTML = "Cancel";
+  editContainer.appendChild(cancelEditButton);
+
+  yesEditButton.addEventListener("click", (e) => {
+    let newName = input.value;
+
+    myData[listIndex].name = newName;
+    showList(0);
+
+    document.body.removeChild(editContainer);
+  });
+
+  cancelEditButton.addEventListener("click", (e) => {
+    document.body.removeChild(editContainer);
+  });
+}
+
+function editItem(listIndex, itemIndex, oldName) {
+  const editContainer = document.createElement("div");
+  document.body.appendChild(editContainer);
+
+  let input = document.createElement("input");
+  input.value = oldName;
+  editContainer.appendChild(input);
+  editContainer.appendChild(input);
+
+  let yesEditButton = document.createElement("button");
+  yesEditButton.innerHTML = "Yes";
+  editContainer.appendChild(yesEditButton);
+
+  let cancelEditButton = document.createElement("button");
+  cancelEditButton.innerHTML = "Cancel";
+  editContainer.appendChild(cancelEditButton);
+
+  yesEditButton.addEventListener("click", (e) => {
+    let newName = input.value;
+
+    myData[listIndex].listItems[itemIndex].name = newName;
+    showList(0);
+
+    document.body.removeChild(editContainer);
+  });
+
+  cancelEditButton.addEventListener("click", (e) => {
+    document.body.removeChild(editContainer);
+  });
+}
+
 //------------------------------------------
 
 function showList() {
-  //   dom element
   let myListElement = document.getElementById("listElement");
 
-  // tømmer dom element
   myListElement.innerHTML = "";
 
-  // tekst variabel indeholdende html
   let MyHtml = "";
 
   myData.forEach((myListData, listIndex) => {
-    MyHtml += `<h2>${myListData.name}</h2><ul>`;
+    MyHtml += `<h2>${myListData.name}</h2>
+              <button onclick="listCallBackRemove(${listIndex})">Done</button>
+              <button onclick="listCallBackRemove(${listIndex})">Remove</button>
+              <button onclick="ListCallBackEdit(${listIndex},'${myListData.name}')">Edit</button>
+              <ul>`;
 
     myListData.listItems.forEach((listItem, itemIndex) => {
-      MyHtml += `<li>${listItem.name}      
-      <button onclick="itemCallBackRemove(${listIndex}, ${itemIndex})">remove</button>
-      <button onclick="itemCallBackEdit(${listIndex}, ${itemIndex}, '${listItem.name}')">edit</button>
-      </li>`;
+      MyHtml += `<li>${listItem.name}
+                  <header id="headerIcons-${listIndex}-${itemIndex}">
+                    <!-- The icon will be added here via JS -->
+                  </header>
+                  <section id="dropdownContent-${listIndex}-${itemIndex}" class="hidden">
+                    <button onclick="itemCallBackRemove(${listIndex}, ${itemIndex})">Done</button>
+                    <button onclick="itemCallBackRemove(${listIndex}, ${itemIndex})">Remove</button>
+                    <button onclick="itemCallBackEdit(${listIndex},${itemIndex},'${listItem.name}')">Edit</button>
+                  </section>
+                </li>`;
     });
 
     MyHtml += "</ul>";
   });
 
   myListElement.innerHTML = MyHtml;
+
+  // Add the menu icons and event listeners
+  myData.forEach((myListData, listIndex) => {
+    myListData.listItems.forEach((listItem, itemIndex) => {
+      let headerIcons = document.getElementById(
+        `headerIcons-${listIndex}-${itemIndex}`
+      );
+      let imgElement = document.createElement("img");
+
+      imgElement.className = "myMenu";
+      imgElement.setAttribute("src", "assets/images/Svg/menu.svg");
+
+      headerIcons.appendChild(imgElement);
+
+      imgElement.addEventListener("click", (e) => {
+        let myDropDown = document.getElementById(
+          `dropdownContent-${listIndex}-${itemIndex}`
+        );
+        myDropDown.classList.toggle("hidden");
+      });
+    });
+  });
 }
 
 function itemCallBackRemove(listIndex, indexClicked) {
-  //   alert("Item Call: " + indexClicked);
-
   removeItem(listIndex, indexClicked);
 
-  //   console.log(myData[0]);
-  // opdater
   showList(0);
 }
 
-function itemCallBackEdit(listIndex, indexClicked) {
-  //   alert("Item Call: " + indexClicked);
+function itemCallBackEdit(listIndex, itemIndex, itemName) {
+  editItem(listIndex, itemIndex, itemName);
 
-  editItem(listIndex, indexClicked);
-
-  //   console.log(myData[0]);
-  // opdater
   showList(0);
+}
+
+function listCallBackRemove(listIndex) {
+  removeList(listIndex);
+
+  showList(0);
+}
+
+function ListCallBackEdit(listIndex, listName) {
+  editList(listIndex, listName);
 }
 
 //----------------------------------------------------------------------
