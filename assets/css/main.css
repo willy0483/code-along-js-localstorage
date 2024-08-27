@@ -1,7 +1,12 @@
-.myMenu {
+.myMenu,
+.addItemIcon,
+.addList {
   width: 30px;
 }
 
 .hidden {
   display: none;
+}
+.block {
+  display: block;
 }
