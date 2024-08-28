@@ -3,9 +3,13 @@
 // Array that contains all the list descriptions
 let myData = [];
 
+const myApp = document.getElementById("app");
+
 //#endregion
 
 //#region Initialization
+
+buildHeader();
 
 // Load saved data or create dummy data if none exists
 myData = ReadObject("SavedData", []);
@@ -14,7 +18,6 @@ if (myData.length === 0) {
 }
 showList();
 
-const myApp = document.getElementById("app");
 let myListButton = document.getElementById("listbutton");
 const divHolder = document.createElement("div");
 divHolder.classList.add("hidden");
@@ -319,3 +322,18 @@ function makeDummyData() {
 }
 
 //#endregion
+
+function buildHeader() {
+  let headerHtml = document.createElement("div");
+
+  headerHtml.innerHTML = `
+    <header class="header-main">
+    <hgroup>
+      <div></div>
+      <h1>All Tasks</h1>
+      <div></div>
+      </hgroup>
+    </header>`;
+
+  headerContainer.appendChild(headerHtml);
+}

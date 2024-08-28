@@ -1,3 +1,42 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+:root {
+  --color-cardBg: #1d1f24;
+  --color-cardTop: #131417;
+  --color-primary: #b4bfc0;
+  --color-background: #050505;
+  --color-whiteLine: #b9c0c9;
+}
+
+#headerContainer {
+  background-color: var(--color-cardBg);
+}
+
+.header-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--color-primary);
+  padding: 0.5rem 1rem 1rem;
+}
+
+.header-main div:first-of-type {
+  background-color: var(--color-whiteLine);
+  height: 3px;
+  width: 150px;
+  margin: 0 auto 1rem;
+}
+.header-main div:last-of-type {
+  background-color: var(--color-cardTop);
+}
+
+.header-main hgroup {
+  text-align: center;
+}
+
 .myMenu,
 .addItemIcon,
 .addList {
