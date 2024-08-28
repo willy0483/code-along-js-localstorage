@@ -3,44 +3,64 @@
 // Array that contains all the list descriptions
 let myData = [];
 
-const myApp = document.getElementById("app");
-
 //#endregion
 
 //#region Initialization
 
 buildHeader();
+buildFooter();
 
 // Load saved data or create dummy data if none exists
-myData = ReadObject("SavedData", []);
+(myData = ReadObject("SavedData")) || [];
 if (myData.length === 0) {
   makeDummyData();
 }
 showList();
 
-let myListButton = document.getElementById("listbutton");
+const myApp = document.getElementById("app");
+
+let yesListbutton = document.getElementById("yesListbutton");
+let noListbutton = document.getElementById("noListbutton");
+
 const divHolder = document.createElement("div");
 divHolder.classList.add("hidden");
-let imgElement = document.createElement("img");
-imgElement.className = "addList";
-imgElement.setAttribute("src", "assets/images/Svg/plus.svg");
+myApp.classList.add("hidden");
 
-myApp.appendChild(imgElement);
+let imgElement = document.getElementById("imgElement");
+let myListname = document.getElementById("myListname");
+
 myApp.appendChild(divHolder);
 
-divHolder.appendChild(myListButton);
+divHolder.classList.add("addList");
+
+let iconHolder = document.createElement("div");
+iconHolder.classList.add("iconHolder");
+divHolder.appendChild(iconHolder);
+iconHolder.appendChild(yesListbutton);
+iconHolder.appendChild(noListbutton);
+
 divHolder.appendChild(myListname);
 
-imgElement.addEventListener("click", (e) => {
+imgElement.addEventListener("click", () => {
   divHolder.classList.toggle("hidden");
 });
 
 // Set up event listener for the "Add List" button
-myListButton.addEventListener("click", (e) => {
-  let myName = document.getElementById("myListname").value;
+yesListbutton.addEventListener("click", () => {
+  let myName = myListname.value;
   makeList(myName);
-  showList(myData);
-  divHolder.classList.toggle("hidden");
+  showList();
+  divHolder.classList.add("hidden");
+  myApp.classList.toggle("hidden");
+});
+
+noListbutton.addEventListener("click", () => {
+  divHolder.classList.add("hidden");
+  myApp.classList.toggle("hidden");
+});
+
+imgElement.addEventListener("click", () => {
+  myApp.classList.toggle("hidden");
 });
 
 //#endregion
@@ -81,7 +101,7 @@ function editList(listIndex, oldName) {
   cancelEditButton.innerHTML = "Cancel";
   editContainer.appendChild(cancelEditButton);
 
-  yesEditButton.addEventListener("click", (e) => {
+  yesEditButton.addEventListener("click", () => {
     let newName = input.value;
     myData[listIndex].name = newName;
     SaveObject(myData, "SavedData"); // Save after making changes
@@ -89,7 +109,7 @@ function editList(listIndex, oldName) {
     document.body.removeChild(editContainer);
   });
 
-  cancelEditButton.addEventListener("click", (e) => {
+  cancelEditButton.addEventListener("click", () => {
     document.body.removeChild(editContainer);
   });
 }
@@ -133,7 +153,7 @@ function editItem(listIndex, itemIndex, oldName) {
   cancelEditButton.innerHTML = "Cancel";
   editContainer.appendChild(cancelEditButton);
 
-  yesEditButton.addEventListener("click", (e) => {
+  yesEditButton.addEventListener("click", () => {
     let newName = input.value;
     myData[listIndex].listItems[itemIndex].name = newName;
     SaveObject(myData, "SavedData"); // Save after making changes
@@ -141,46 +161,57 @@ function editItem(listIndex, itemIndex, oldName) {
     document.body.removeChild(editContainer);
   });
 
-  cancelEditButton.addEventListener("click", (e) => {
+  cancelEditButton.addEventListener("click", () => {
     document.body.removeChild(editContainer);
   });
 }
 
 // Function to add a new item to a list
 function addItem(listIndex) {
+  const navFooter = document.getElementById("navFooter");
+
+  // Check if the add item button already exists
+  if (document.querySelector(".addItemIcon")) return;
+
+  const addItemDiv = document.createElement("div");
+  addItemDiv.classList.add("hidden");
+
+  imgElement.classList.add("hidden");
+
   let addItemContainer = document.getElementById("addItem");
-  let imgElement = document.createElement("img");
+  let imgElementItem = document.createElement("img");
 
-  imgElement.className = "addItemIcon";
-  imgElement.setAttribute("src", "assets/images/Svg/plus.svg");
-  addItemContainer.appendChild(imgElement);
+  imgElementItem.className = "addItemIcon";
+  imgElementItem.setAttribute("src", "assets/images/Svg/Icon Plus.svg");
+  navFooter.appendChild(imgElementItem);
 
-  imgElement.addEventListener("click", () => {
-    const addItemDiv = document.createElement("div");
+  imgElementItem.addEventListener("click", () => {
+    addItemDiv.classList.add("addItemDiv");
     addItemContainer.appendChild(addItemDiv);
 
     let addItemName = document.createElement("input");
+    addItemName.classList.add("addItemInput");
     addItemDiv.appendChild(addItemName);
 
-    const yesButton = document.createElement("button");
-    yesButton.innerHTML = "Yes";
+    const yesButton = document.createElement("img");
+    yesButton.setAttribute("src", "assets/images/Svg/Check_ring.svg");
     addItemDiv.appendChild(yesButton);
 
-    const noButton = document.createElement("button");
-    noButton.innerHTML = "No";
+    const noButton = document.createElement("img");
+    noButton.setAttribute("src", "assets/images/Svg/Dell_light.svg");
     addItemDiv.appendChild(noButton);
 
-    yesButton.addEventListener("click", (e) => {
+    yesButton.addEventListener("click", () => {
       let myName = addItemName.value;
       makeItem(listIndex, myName);
       addItemContainer.removeChild(addItemDiv);
-      addItemContainer.removeChild(imgElement);
       showList();
+      myApp.classList.toggle("hidden");
     });
 
-    noButton.addEventListener("click", (e) => {
+    noButton.addEventListener("click", () => {
       addItemContainer.removeChild(addItemDiv);
-      addItemContainer.removeChild(imgElement);
+      myApp.classList.toggle("hidden");
     });
   });
 }
@@ -196,26 +227,26 @@ function showList() {
   let MyHtml = "";
 
   myData.forEach((myListData, listIndex) => {
-    MyHtml += `<header><h2 onclick="listOnclick(${listIndex})">${myListData.name} </h2> <div id="headerIcons-${listIndex}"></div></header>                     
+    MyHtml += `<header id="headerIcons-${listIndex}" class="headerList"><h2 onclick="listOnclick(${listIndex})">${myListData.name}</h2></header>                     
                       <section id="dropdownContent-${listIndex}" class="hidden">
-                      
               <button onclick="listCallBackRemove(${listIndex})">Done</button>
               <button onclick="listCallBackRemove(${listIndex})">Remove</button>
               <button onclick="ListCallBackEdit(${listIndex},'${myListData.name}')">Edit</button>
                                 </section>
 
               <ul>`;
-
     myListData.listItems.forEach((listItem, itemIndex) => {
-      MyHtml += `<li>${listItem.name}
-                  <header id="headerIcons-${listIndex}-${itemIndex}">
-                  </header>
-                  <section id="dropdownContent-${listIndex}-${itemIndex}" class="hidden">
-                    <button onclick="itemCallBackRemove(${listIndex}, ${itemIndex})">Done</button>
-                    <button onclick="itemCallBackRemove(${listIndex}, ${itemIndex})">Remove</button>
-                    <button onclick="itemCallBackEdit(${listIndex},${itemIndex},'${listItem.name}')">Edit</button>
-                  </section>
-                </li>`;
+      MyHtml += `<li class="listItem hidden">
+  <header class="listItemHeader" id="headerIcons-${listIndex}-${itemIndex}">
+    <h2>${listItem.name}</h2>
+  </header>
+  <section id="dropdownContent-${listIndex}-${itemIndex}" class="hidden">
+    <button onclick="itemCallBackRemove(${listIndex}, ${itemIndex})">Done</button>
+    <button onclick="itemCallBackRemove(${listIndex}, ${itemIndex})">Remove</button>
+    <button onclick="itemCallBackEdit(${listIndex}, ${itemIndex},'${listItem.name}')">Edit</button>
+  </section>
+</li>
+`;
     });
 
     MyHtml += "</ul>";
@@ -229,10 +260,10 @@ function showList() {
     let imgElement = document.createElement("img");
 
     imgElement.className = "myMenu";
-    imgElement.setAttribute("src", "assets/images/Svg/menu.svg");
+    imgElement.setAttribute("src", "assets/images/Svg/Menu Button 1.svg");
     headerIcons.appendChild(imgElement);
 
-    imgElement.addEventListener("click", (e) => {
+    imgElement.addEventListener("click", () => {
       let myDropDown = document.getElementById(`dropdownContent-${listIndex}`);
       myDropDown.classList.toggle("hidden");
     });
@@ -244,10 +275,10 @@ function showList() {
       let imgElement = document.createElement("img");
 
       imgElement.className = "myMenu";
-      imgElement.setAttribute("src", "assets/images/Svg/menu.svg");
+      imgElement.setAttribute("src", "assets/images/Svg/Menu Button 1.svg");
       headerIcons.appendChild(imgElement);
 
-      imgElement.addEventListener("click", (e) => {
+      imgElement.addEventListener("click", () => {
         let myDropDown = document.getElementById(
           `dropdownContent-${listIndex}-${itemIndex}`
         );
@@ -288,7 +319,6 @@ function ListCallBackEdit(listIndex, listName) {
 // Handle list click (e.g., add item)
 function listOnclick(listIndex) {
   addItem(listIndex);
-  showList();
 }
 
 //#endregion
@@ -303,9 +333,8 @@ function SaveObject(myData, itemName) {
 
 // Read the list data from local storage
 function ReadObject(itemName) {
-  let mybasketstring = localStorage.getItem(itemName);
-  let myBasket = JSON.parse(mybasketstring);
-  return myBasket;
+  let myBasketString = localStorage.getItem(itemName);
+  return JSON.parse(myBasketString) || [];
 }
 
 //#endregion
@@ -331,9 +360,26 @@ function buildHeader() {
     <hgroup>
       <div></div>
       <h1>All Tasks</h1>
-      <div></div>
       </hgroup>
-    </header>`;
+    </header>
+     <div></div>`;
 
   headerContainer.appendChild(headerHtml);
+}
+
+function buildFooter() {
+  let footerHtml = document.createElement("div");
+
+  footerHtml.innerHTML = `
+  <section>
+      <footer class="footer-main">
+      <nav id="navFooter">
+        <img class="addListSvg" src="assets/images/Svg/Icon Plus.svg" id="imgElement" alt="addList svg" />
+      </nav>
+      <div id="addItem"></div>
+    </footer>
+    </section>
+  `;
+
+  footerContainer.appendChild(footerHtml);
 }
