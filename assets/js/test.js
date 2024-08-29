@@ -11,7 +11,7 @@ buildHeader();
 buildFooter();
 
 // Load saved data or create dummy data if none exists
-(myData = ReadObject("SavedData")) || [];
+(myData = ReadObject("SavedData")), [];
 if (myData.length === 0) {
   makeDummyData();
 }
@@ -122,18 +122,18 @@ function editList(listIndex, oldName) {
 function makeItem(index, myName) {
   let myListItem = {
     name: myName,
-    status: true, // Item status, true could mean 'not done'
+    status: true,
   };
 
   myData[index].listItems.push(myListItem);
-  SaveObject(myData, "SavedData"); // Save after making changes
+  SaveObject(myData, "SavedData");
 }
 
 // Remove an item from a list
 function removeItem(listIndex, itemIndex) {
   let myList = myData[listIndex];
   myList.listItems.splice(itemIndex, 1);
-  SaveObject(myData, "SavedData"); // Save after making changes
+  SaveObject(myData, "SavedData");
 }
 
 // Edit an item in a list
@@ -156,7 +156,7 @@ function editItem(listIndex, itemIndex, oldName) {
   yesEditButton.addEventListener("click", () => {
     let newName = input.value;
     myData[listIndex].listItems[itemIndex].name = newName;
-    SaveObject(myData, "SavedData"); // Save after making changes
+    SaveObject(myData, "SavedData");
     showList();
     document.body.removeChild(editContainer);
   });
@@ -168,51 +168,101 @@ function editItem(listIndex, itemIndex, oldName) {
 
 // Function to add a new item to a list
 function addItem(listIndex) {
-  const navFooter = document.getElementById("navFooter");
+  console.log("click");
 
-  // Check if the add item button already exists
+  const navFooter = document.getElementById("navFooter");
+  navFooter.innerHTML = "";
+
+  navFooter.classList.add("footerHomeAdd");
+
+  // Home Icon
+
+  const homeIcon = document.createElement("img");
+  homeIcon.className = "addHomeIcon";
+  homeIcon.setAttribute("src", "assets/images/Svg/Home.svg");
+
+  navFooter.appendChild(homeIcon);
+
+  navFooter.style.display = "grid";
+  navFooter.style.gridTemplateColumns = "1fr 1fr";
+  navFooter.style.gap = "7.5rem";
+  navFooter.style.justifyItems = "center";
+  navFooter.style.marginLeft = "-12rem";
+
+  let = white = document.getElementById("whiteHolder");
+
+  white.classList.add("whiteHolder");
+  homeWhite.classList.toggle("hidden");
+
+  // Home white line
+
+  // addItemIcon
+
   if (document.querySelector(".addItemIcon")) return;
 
-  const addItemDiv = document.createElement("div");
-  addItemDiv.classList.add("hidden");
-
+  const imgElementItem = document.createElement("img");
   imgElement.classList.add("hidden");
-
-  let addItemContainer = document.getElementById("addItem");
-  let imgElementItem = document.createElement("img");
 
   imgElementItem.className = "addItemIcon";
   imgElementItem.setAttribute("src", "assets/images/Svg/Icon Plus.svg");
   navFooter.appendChild(imgElementItem);
 
+  let addItemContainer = document.getElementById("addItem");
+  if (!addItemContainer) {
+    addItemContainer = document.createElement("div");
+    addItemContainer.id = "addItem";
+    navFooter.appendChild(addItemContainer);
+  }
+  addItemContainer.classList.add("hidden");
+
+  const addItemDiv = document.createElement("div");
+  addItemDiv.classList.add("addItemDiv");
+  addItemContainer.appendChild(addItemDiv);
+
+  const addItemName = document.createElement("input");
+  addItemName.classList.add("addItemInput");
+  addItemDiv.appendChild(addItemName);
+
+  const yesButton = document.createElement("img");
+  yesButton.setAttribute("src", "assets/images/Svg/Check_ring.svg");
+  addItemDiv.appendChild(yesButton);
+
+  const noButton = document.createElement("img");
+  noButton.setAttribute("src", "assets/images/Svg/Dell_light.svg");
+  addItemDiv.appendChild(noButton);
+
   imgElementItem.addEventListener("click", () => {
-    addItemDiv.classList.add("addItemDiv");
-    addItemContainer.appendChild(addItemDiv);
+    addItemContainer.classList.toggle("hidden");
+  });
 
-    let addItemName = document.createElement("input");
-    addItemName.classList.add("addItemInput");
-    addItemDiv.appendChild(addItemName);
+  homeIcon.addEventListener("click", () => {
+    navFooter.style.display = "";
+    navFooter.style.gridTemplateColumns = "";
+    navFooter.style.gap = "";
+    navFooter.style.justifyItems = "";
+    navFooter.style.marginLeft = "";
 
-    const yesButton = document.createElement("img");
-    yesButton.setAttribute("src", "assets/images/Svg/Check_ring.svg");
-    addItemDiv.appendChild(yesButton);
+    white.classList.remove("whiteHolder");
 
-    const noButton = document.createElement("img");
-    noButton.setAttribute("src", "assets/images/Svg/Dell_light.svg");
-    addItemDiv.appendChild(noButton);
+    homeIcon.classList.toggle("hidden");
+    white.classList.add("hidden");
+    white.classList.toggle("hidden");
+    homeWhite.classList.toggle("hidden");
+    imgElement.classList.toggle("hidden");
+  });
 
-    yesButton.addEventListener("click", () => {
-      let myName = addItemName.value;
-      makeItem(listIndex, myName);
-      addItemContainer.removeChild(addItemDiv);
-      showList();
-      myApp.classList.toggle("hidden");
-    });
+  yesButton.addEventListener("click", () => {
+    const myName = addItemName.value;
+    makeItem(listIndex, myName);
+    showList();
+    console.log("add item");
+    addItemContainer.classList.toggle("hidden");
+  });
 
-    noButton.addEventListener("click", () => {
-      addItemContainer.removeChild(addItemDiv);
-      myApp.classList.toggle("hidden");
-    });
+  // Handle No button click
+  noButton.addEventListener("click", () => {
+    addItemContainer.classList.toggle("hidden");
+    console.log("Cancelled adding item");
   });
 }
 
@@ -232,11 +282,9 @@ function showList() {
               <button onclick="listCallBackRemove(${listIndex})">Done</button>
               <button onclick="listCallBackRemove(${listIndex})">Remove</button>
               <button onclick="ListCallBackEdit(${listIndex},'${myListData.name}')">Edit</button>
-                                </section>
-
-              <ul>`;
+                                </section>`;
     myListData.listItems.forEach((listItem, itemIndex) => {
-      MyHtml += `<li class="listItem hidden">
+      MyHtml += `<li class="listItem">
   <header class="listItemHeader" id="headerIcons-${listIndex}-${itemIndex}">
     <h2>${listItem.name}</h2>
   </header>
@@ -245,11 +293,8 @@ function showList() {
     <button onclick="itemCallBackRemove(${listIndex}, ${itemIndex})">Remove</button>
     <button onclick="itemCallBackEdit(${listIndex}, ${itemIndex},'${listItem.name}')">Edit</button>
   </section>
-</li>
-`;
+</li>`;
     });
-
-    MyHtml += "</ul>";
   });
 
   myListElement.innerHTML = MyHtml;
@@ -376,7 +421,12 @@ function buildFooter() {
       <nav id="navFooter">
         <img class="addListSvg" src="assets/images/Svg/Icon Plus.svg" id="imgElement" alt="addList svg" />
       </nav>
-      <div id="addItem"></div>
+
+      
+          <section id="whiteHolder">
+               <div id="addItem"></div>
+    <div id="homeWhite" class="hidden"></div>
+          </section>
     </footer>
     </section>
   `;
