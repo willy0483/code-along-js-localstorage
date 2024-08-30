@@ -104,7 +104,7 @@ function editList(listIndex, oldName) {
   yesEditButton.addEventListener("click", () => {
     let newName = input.value;
     myData[listIndex].name = newName;
-    SaveObject(myData, "SavedData"); // Save after making changes
+    SaveObject(myData, "SavedData");
     showList();
     document.body.removeChild(editContainer);
   });
@@ -168,8 +168,6 @@ function editItem(listIndex, itemIndex, oldName) {
 
 // Function to add a new item to a list
 function addItem(listIndex) {
-  console.log("click");
-
   const navFooter = document.getElementById("navFooter");
   navFooter.innerHTML = "";
 
@@ -249,20 +247,22 @@ function addItem(listIndex) {
     white.classList.toggle("hidden");
     homeWhite.classList.toggle("hidden");
     imgElement.classList.toggle("hidden");
+    showList();
   });
 
   yesButton.addEventListener("click", () => {
     const myName = addItemName.value;
     makeItem(listIndex, myName);
-    showList();
     console.log("add item");
     addItemContainer.classList.toggle("hidden");
+    showItems(listIndex);
   });
 
   // Handle No button click
   noButton.addEventListener("click", () => {
     addItemContainer.classList.toggle("hidden");
     console.log("Cancelled adding item");
+    showItems(listIndex);
   });
 }
 
@@ -277,14 +277,14 @@ function showList() {
   let MyHtml = "";
 
   myData.forEach((myListData, listIndex) => {
-    MyHtml += `<header id="headerIcons-${listIndex}" class="headerList"><h2 onclick="listOnclick(${listIndex})">${myListData.name}</h2></header>                     
-                      <section id="dropdownContent-${listIndex}" class="hidden">
+    MyHtml += `<header id="headerIcons-${listIndex}" onclick="showItems(${listIndex}, '${myListData.name}')" class="headerList"><h2 onclick="listOnclick(${listIndex})">${myListData.name}</h2></header>                     
+                      <section id="dropdownContent-${listIndex}" class="dropdown hidden">
               <button onclick="listCallBackRemove(${listIndex})">Done</button>
               <button onclick="listCallBackRemove(${listIndex})">Remove</button>
               <button onclick="ListCallBackEdit(${listIndex},'${myListData.name}')">Edit</button>
                                 </section>`;
     myListData.listItems.forEach((listItem, itemIndex) => {
-      MyHtml += `<li class="listItem">
+      MyHtml += `<li class="listItem hidden">
   <header class="listItemHeader" id="headerIcons-${listIndex}-${itemIndex}">
     <h2>${listItem.name}</h2>
   </header>
@@ -421,8 +421,6 @@ function buildFooter() {
       <nav id="navFooter">
         <img class="addListSvg" src="assets/images/Svg/Icon Plus.svg" id="imgElement" alt="addList svg" />
       </nav>
-
-      
           <section id="whiteHolder">
                <div id="addItem"></div>
     <div id="homeWhite" class="hidden"></div>
@@ -432,4 +430,50 @@ function buildFooter() {
   `;
 
   footerContainer.appendChild(footerHtml);
+}
+
+function showItems(listIndex) {
+  const listElement = document.getElementById("listElement");
+  listElement.innerHTML = "";
+
+  console.log("showItems click");
+  const listItems = myData[listIndex].listItems;
+
+  let MyHtml = "";
+  listItems.forEach((listItem, itemIndex) => {
+    console.log("Item index: " + itemIndex + ", Item name: " + listItem.name);
+
+    MyHtml += `<li class="listItem">
+      <header class="listItemHeader" id="headerIcons-${listIndex}-${itemIndex}">
+        <h2>${listItem.name}</h2>
+      </header>
+      <section id="dropdownContent-${listIndex}-${itemIndex}" class="dropdown hidden">
+        <button onclick="itemCallBackRemove(${listIndex}, ${itemIndex})">Done</button>
+        <button onclick="itemCallBackRemove(${listIndex}, ${itemIndex})">Remove</button>
+        <button onclick="itemCallBackEdit(${listIndex}, ${itemIndex}, '${listItem.name}')">Edit</button>
+      </section>
+    </li>`;
+  });
+
+  listElement.innerHTML = MyHtml;
+
+  // Now, attach the event listeners after the HTML is set
+  myData[listIndex].listItems.forEach((listItem, itemIndex) => {
+    let headerIcons = document.getElementById(
+      `headerIcons-${listIndex}-${itemIndex}`
+    );
+    let imgElement = document.createElement("img");
+
+    imgElement.className = "myMenu";
+    imgElement.setAttribute("src", "assets/images/Svg/Menu Button 1.svg");
+    headerIcons.appendChild(imgElement);
+
+    imgElement.addEventListener("click", (e) => {
+      let myDropDown = document.getElementById(
+        `dropdownContent-${listIndex}-${itemIndex}`
+      );
+      myDropDown.classList.toggle("hidden");
+      console.log("img click");
+    });
+  });
 }
