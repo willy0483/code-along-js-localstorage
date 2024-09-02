@@ -1,3 +1,7 @@
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js");
+}
+
 //#region Global Variables
 
 // Array that contains all the list descriptions
@@ -253,7 +257,6 @@ function addItem(listIndex) {
   yesButton.addEventListener("click", () => {
     const myName = addItemName.value;
     makeItem(listIndex, myName);
-    console.log("add item");
     addItemContainer.classList.toggle("hidden");
     showItems(listIndex);
   });
@@ -261,7 +264,6 @@ function addItem(listIndex) {
   // Handle No button click
   noButton.addEventListener("click", () => {
     addItemContainer.classList.toggle("hidden");
-    console.log("Cancelled adding item");
     showItems(listIndex);
   });
 }
@@ -436,13 +438,10 @@ function showItems(listIndex) {
   const listElement = document.getElementById("listElement");
   listElement.innerHTML = "";
 
-  console.log("showItems click");
   const listItems = myData[listIndex].listItems;
 
   let MyHtml = "";
   listItems.forEach((listItem, itemIndex) => {
-    console.log("Item index: " + itemIndex + ", Item name: " + listItem.name);
-
     MyHtml += `<li class="listItem">
       <header class="listItemHeader" id="headerIcons-${listIndex}-${itemIndex}">
         <h2>${listItem.name}</h2>
@@ -473,7 +472,6 @@ function showItems(listIndex) {
         `dropdownContent-${listIndex}-${itemIndex}`
       );
       myDropDown.classList.toggle("hidden");
-      console.log("img click");
     });
   });
 }
