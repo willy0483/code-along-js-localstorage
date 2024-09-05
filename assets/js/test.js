@@ -15,9 +15,12 @@ buildHeader();
 buildFooter();
 
 // Load saved data or create dummy data if none exists
-(myData = ReadObject("SavedData")), [];
+
+myData = ReadObject("SavedData");
+
+// make dummyData hvis myData er tom
 if (myData.length === 0) {
-  makeDummyData();
+  // makeDummyData();
 }
 showList();
 
@@ -78,14 +81,23 @@ function makeList(myName) {
     listItems: [], // Items in the list
   };
 
-  myData.push(myList);
-  SaveObject(myData, "SavedData"); // Save after making changes
+  // error checking er det en array
+  if (Array.isArray(myData)) {
+    myData.push(myList);
+    SaveObject(myData, "SavedData"); // Save after making changes
+  } else {
+    // error message not an array
+    console.log("Error message: push myList did not work - not saved");
+  }
 }
 
 // Remove a list by its index
 function removeList(listIndex) {
-  myData.splice(listIndex, 1);
-  SaveObject(myData, "SavedData"); // Save after making changes
+  // error checking er der data er det en array er der nogen i array
+  if (myData && Array.isArray(myData) && myData.length > 0) {
+    myData.splice(listIndex, 1);
+    SaveObject(myData, "SavedData"); // Save after making changes
+  }
 }
 
 // Edit the name of a list
@@ -278,47 +290,42 @@ function showList() {
   myListElement.innerHTML = "";
   let MyHtml = "";
 
-  myData.forEach((myListData, listIndex) => {
-    MyHtml += `<header id="headerIcons-${listIndex}" onclick="showItems(${listIndex}, '${myListData.name}')" class="headerList"><h2 onclick="listOnclick(${listIndex})">${myListData.name}</h2></header>                     
-                      <section id="dropdownContent-${listIndex}" class="dropdown hidden">
-              <button onclick="listCallBackRemove(${listIndex})">Done</button>
-              <button onclick="listCallBackRemove(${listIndex})">Remove</button>
-              <button onclick="ListCallBackEdit(${listIndex},'${myListData.name}')">Edit</button>
-                                </section>`;
-    myListData.listItems.forEach((listItem, itemIndex) => {
-      MyHtml += `<li class="listItem hidden">
-  <header class="listItemHeader" id="headerIcons-${listIndex}-${itemIndex}">
-    <h2>${listItem.name}</h2>
-  </header>
-  <section id="dropdownContent-${listIndex}-${itemIndex}" class="hidden">
-    <button onclick="itemCallBackRemove(${listIndex}, ${itemIndex})">Done</button>
-    <button onclick="itemCallBackRemove(${listIndex}, ${itemIndex})">Remove</button>
-    <button onclick="itemCallBackEdit(${listIndex}, ${itemIndex},'${listItem.name}')">Edit</button>
-  </section>
-</li>`;
+  // error checking for data om der er nogen i myData og array  og hvad hvor en datatype det er = ListCard
+  if (myData && Array.isArray(myData) && myData.length > 0) {
+    myData.forEach((myListData, listIndex) => {
+      MyHtml += `<header id="headerIcons-${listIndex}" onclick="showItems(${listIndex}, '${myListData.name}')" class="headerList"><h2 onclick="listOnclick(${listIndex})">${myListData.name}</h2></header>                     
+                        <section id="dropdownContent-${listIndex}" class="dropdown hidden">
+                <button onclick="listCallBackRemove(${listIndex})">Done</button>
+                <button onclick="listCallBackRemove(${listIndex})">Remove</button>
+                <button onclick="ListCallBackEdit(${listIndex},'${myListData.name}')">Edit</button>
+                                  </section>`;
+      myListData.listItems.forEach((listItem, itemIndex) => {
+        MyHtml += `<li class="listItem hidden">
+    <header class="listItemHeader" id="headerIcons-${listIndex}-${itemIndex}">
+      <h2>${listItem.name}</h2>
+    </header>
+    <section id="dropdownContent-${listIndex}-${itemIndex}" class="hidden">
+      <button onclick="itemCallBackRemove(${listIndex}, ${itemIndex})">Done</button>
+      <button onclick="itemCallBackRemove(${listIndex}, ${itemIndex})">Remove</button>
+      <button onclick="itemCallBackEdit(${listIndex}, ${itemIndex},'${listItem.name}')">Edit</button>
+    </section>
+  </li>`;
+      });
     });
-  });
+  } else {
+    // error message hvis der ikke er nogen data/ikke en array = ListCard
+    MyHtml += `<h1 class="error">error checking: error noData - noArray</h1>`;
+    console.log("error checking: error noData - noArray = ListCard");
+  }
 
   myListElement.innerHTML = MyHtml;
 
   // Add menu icons and event listeners
-  myData.forEach((myListData, listIndex) => {
-    let headerIcons = document.getElementById(`headerIcons-${listIndex}`);
-    let imgElement = document.createElement("img");
 
-    imgElement.className = "myMenu";
-    imgElement.setAttribute("src", "assets/images/Svg/Menu Button 1.svg");
-    headerIcons.appendChild(imgElement);
-
-    imgElement.addEventListener("click", () => {
-      let myDropDown = document.getElementById(`dropdownContent-${listIndex}`);
-      myDropDown.classList.toggle("hidden");
-    });
-
-    myListData.listItems.forEach((listItem, itemIndex) => {
-      let headerIcons = document.getElementById(
-        `headerIcons-${listIndex}-${itemIndex}`
-      );
+  // error checking for data om der er nogen i myData og array  og hvad hvor en datatype det er = Menu
+  if (myData && Array.isArray(myData) && myData.length > 0) {
+    myData.forEach((myListData, listIndex) => {
+      let headerIcons = document.getElementById(`headerIcons-${listIndex}`);
       let imgElement = document.createElement("img");
 
       imgElement.className = "myMenu";
@@ -327,12 +334,33 @@ function showList() {
 
       imgElement.addEventListener("click", () => {
         let myDropDown = document.getElementById(
-          `dropdownContent-${listIndex}-${itemIndex}`
+          `dropdownContent-${listIndex}`
         );
         myDropDown.classList.toggle("hidden");
       });
+
+      myListData.listItems.forEach((listItem, itemIndex) => {
+        let headerIcons = document.getElementById(
+          `headerIcons-${listIndex}-${itemIndex}`
+        );
+        let imgElement = document.createElement("img");
+
+        imgElement.className = "myMenu";
+        imgElement.setAttribute("src", "assets/images/Svg/Menu Button 1.svg");
+        headerIcons.appendChild(imgElement);
+
+        imgElement.addEventListener("click", () => {
+          let myDropDown = document.getElementById(
+            `dropdownContent-${listIndex}-${itemIndex}`
+          );
+          myDropDown.classList.toggle("hidden");
+        });
+      });
     });
-  });
+  } else {
+    // error message hvis der ikke er nogen data/ikke en array = Menu
+    console.log("error checking: error noData - noArray = menu");
+  }
 }
 
 //#endregion
